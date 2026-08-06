@@ -1,0 +1,31 @@
+/*
+ * New Rocker (display font) — the .ttf could not be downloaded in this
+ * environment to self-host like the fonts below, so it's loaded from Google
+ * Fonts directly for now. Same GDPR caveat as the old setup: swap this for a
+ * self-hosted /assets/fonts/new-rocker-400.ttf + @font-face block whenever
+ * you get a chance to download it yourself, then delete this @import line.
+ * NOTE: @import must stay the very first rule in this file or the browser
+ * silently ignores it.
+ */
+@import url('https://fonts.googleapis.com/css2?family=New+Rocker&amp;display=swap');
+
+/*
+ * Self-hosted replacements for the fonts previously loaded from
+ * fonts.googleapis.com / fonts.gstatic.com. Serving them from our own
+ * domain means visitor IP addresses are never sent to Google just to
+ * render text — this was the actual GDPR issue in play, not the fonts
+ * themselves.
+ *
+ * Place the matching .ttf files in /public/assets/fonts/ using the exact
+ * filenames referenced below.
+ */
+@font-face{ font-family:'Cinzel'; font-style:normal; font-weight:600; font-display:swap; src:url('fonts/cinzel-600.ttf') format('truetype'); }
+@font-face{ font-family:'Cinzel'; font-style:normal; font-weight:700; font-display:swap; src:url('fonts/cinzel-700.ttf') format('truetype'); }
+@font-face{ font-family:'Cinzel'; font-style:normal; font-weight:900; font-display:swap; src:url('fonts/cinzel-900.ttf') format('truetype'); }
+
+@font-face{ font-family:'Rajdhani'; font-style:normal; font-weight:500; font-display:swap; src:url('fonts/rajdhani-500.ttf') format('truetype'); }
+@font-face{ font-family:'Rajdhani'; font-style:normal; font-weight:600; font-display:swap; src:url('fonts/rajdhani-600.ttf') format('truetype'); }
+@font-face{ font-family:'Rajdhani'; font-style:normal; font-weight:700; font-display:swap; src:url('fonts/rajdhani-700.ttf') format('truetype'); }
+
+@font-face{ font-family:'JetBrains Mono'; font-style:normal; font-weight:400; font-display:swap; src:url('fonts/jetbrains-mono-400.ttf') format('truetype'); }
+@font-face{ font-family:'JetBrains Mono'; font-style:normal; font-weight:500; font-display:swap; src:url('fonts/jetbrains-mono-500.ttf') format('truetype'); }
