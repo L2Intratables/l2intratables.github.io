@@ -1,0 +1,14 @@
+{
+  "albums": [
+    {
+      "title": "Raids Custom Drop (Armas, Accesorios, Joyería)",
+      "category": "eventos",
+      "date": "2026-10-19",
+      "cover": "assets/albums/raids-custom-drop/raids-custom-drop-01.png",
+      "photos": [
+        "assets/albums/raids-custom-drop/raids-custom-drop-01.png",
+        "assets/albums/raids-custom-drop/raids-custom-drop-02.png"
+      ]
+    }
+  ]
+}
