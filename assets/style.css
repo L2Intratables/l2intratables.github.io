@@ -391,9 +391,12 @@ td img{width:32px;height:32px;image-rendering:pixelated;filter:drop-shadow(0 0 6
   html{scroll-behavior:auto}
   *,*::before,*::after{animation:none!important;transition:none!important}
   .ticker{overflow:visible}
-  .ticker-track{width:auto;flex-wrap:wrap}
+  .ticker-track{width:100%;display:block}
   .ticker-group[aria-hidden]{display:none}
-  .ticker-group{flex-wrap:wrap}
+  .ticker-group{flex:1 1 auto;min-width:0;flex-wrap:wrap;padding-left:20px}
+  .ticker-item{white-space:normal;padding:10px 22px 10px 0}
 }
 
 .autoacc{margin:18px 0 0;max-width:34em}
+
+code{padding:2px 7px;background:rgba(255,45,74,.14);border:1px solid var(--line);color:var(--core);font-size:.9em}

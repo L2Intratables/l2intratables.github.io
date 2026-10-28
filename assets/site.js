@@ -84,7 +84,7 @@
   (async function gallery() {
     const root = $('#public-gallery');
     if (!root) return;
-    let albums = [];
+    let albums = [], loadError = false;
     try {
       const r = await fetch('assets/albums/albums.json', { cache: 'no-store' });
       if (!r.ok) throw new Error('No se pudo leer el índice de álbumes');
@@ -93,7 +93,7 @@
         ...a,
         photos: (a.photos || []).map(p => typeof p === 'string' ? { src: p, thumb: p, title: '' } : { thumb: p.src, title: '', ...p })
       }));
-    } catch (err) { console.warn('Galería pública no disponible:', err); }
+    } catch (err) { loadError = true; console.warn('Galería pública no disponible:', err); }
 
     const filters = $$('[data-filter]');
     const box = $('#gallery-lightbox'), img = $('#lightbox-image'), cap = $('#lightbox-caption');
@@ -106,6 +106,10 @@
 
     const render = (filter = 'all') => {
       const visible = albums.filter(a => filter === 'all' || a.category === filter);
+      if (loadError) {
+        root.innerHTML = '<div class="gallery-empty panel"><div class="glyph" aria-hidden="true"><span>✦</span></div><h2>No se pudo cargar la galería</h2><p>Si abriste el archivo directamente desde tu PC, el navegador bloquea la lectura de las fotos. Se ven bien al publicar el sitio en GitHub Pages, o abriéndolo con un servidor local.</p><p class="note">Probar en tu PC: en la carpeta del sitio ejecutá <code>python -m http.server 8000</code> y entrá a http://localhost:8000</p></div>';
+        return;
+      }
       if (!visible.length) {
         root.innerHTML = '<div class="gallery-empty panel"><div class="glyph" aria-hidden="true"><span>✦</span></div><h2>La próxima historia la escribimos juntos</h2><p>Todavía no hay fotos publicadas en esta categoría.</p></div>';
         return;
