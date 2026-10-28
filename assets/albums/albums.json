@@ -2,12 +2,109 @@
   "albums": [
     {
       "title": "Raids Custom Drop (Armas, Accesorios, Joyería)",
-      "category": "eventos",
+      "category": "raids",
       "date": "2026-10-19",
-      "cover": "assets/albums/raids-custom-drop/raids-custom-drop-01.png",
+      "cover": "assets/albums/raids-custom-drop/01-raid-custom-en-el-valle-de-los-gigantes-thumb.webp",
       "photos": [
-        "assets/albums/raids-custom-drop/raids-custom-drop-01.png",
-        "assets/albums/raids-custom-drop/raids-custom-drop-02.png"
+        {
+          "src": "assets/albums/raids-custom-drop/01-raid-custom-en-el-valle-de-los-gigantes.webp",
+          "thumb": "assets/albums/raids-custom-drop/01-raid-custom-en-el-valle-de-los-gigantes-thumb.webp",
+          "title": ""
+        },
+        {
+          "src": "assets/albums/raids-custom-drop/02-drop-custom-de-raid.webp",
+          "thumb": "assets/albums/raids-custom-drop/02-drop-custom-de-raid-thumb.webp",
+          "title": ""
+        }
+      ]
+    },
+    {
+      "title": "Raid Bosses del mundo",
+      "category": "raids",
+      "date": "2026-10-28",
+      "cover": "assets/albums/raid-bosses/01-ice-fairy-sirra-thumb.webp",
+      "photos": [
+        {
+          "src": "assets/albums/raid-bosses/01-ice-fairy-sirra.webp",
+          "thumb": "assets/albums/raid-bosses/01-ice-fairy-sirra-thumb.webp",
+          "title": "Ice Fairy Sirra"
+        },
+        {
+          "src": "assets/albums/raid-bosses/02-custom-raid-boss.webp",
+          "thumb": "assets/albums/raid-bosses/02-custom-raid-boss-thumb.webp",
+          "title": "Custom Raid Boss"
+        },
+        {
+          "src": "assets/albums/raid-bosses/03-sealed-evil-power.webp",
+          "thumb": "assets/albums/raid-bosses/03-sealed-evil-power-thumb.webp",
+          "title": "Sealed Evil Power"
+        },
+        {
+          "src": "assets/albums/raid-bosses/04-bloody-priest-rudelto.webp",
+          "thumb": "assets/albums/raid-bosses/04-bloody-priest-rudelto-thumb.webp",
+          "title": "Bloody Priest Rudelto"
+        },
+        {
+          "src": "assets/albums/raid-bosses/05-plague-golem.webp",
+          "thumb": "assets/albums/raid-bosses/05-plague-golem-thumb.webp",
+          "title": "Plague Golem"
+        },
+        {
+          "src": "assets/albums/raid-bosses/06-raid-fighters-de-anakim.webp",
+          "thumb": "assets/albums/raid-bosses/06-raid-fighters-de-anakim-thumb.webp",
+          "title": "Raid Fighters de Anakim"
+        }
+      ]
+    },
+    {
+      "title": "Capas, joyería y hairs",
+      "category": "equipamiento",
+      "date": "2026-10-28",
+      "cover": "assets/albums/capas-y-accesorios/01-capa-del-dios-dragon-antharas-thumb.webp",
+      "photos": [
+        {
+          "src": "assets/albums/capas-y-accesorios/01-capa-del-dios-dragon-antharas.webp",
+          "thumb": "assets/albums/capas-y-accesorios/01-capa-del-dios-dragon-antharas-thumb.webp",
+          "title": "Capa del Dios Dragón Antharas"
+        },
+        {
+          "src": "assets/albums/capas-y-accesorios/02-capa-del-dios-dragon-valakas.webp",
+          "thumb": "assets/albums/capas-y-accesorios/02-capa-del-dios-dragon-valakas-thumb.webp",
+          "title": "Capa del Dios Dragón Valakas"
+        },
+        {
+          "src": "assets/albums/capas-y-accesorios/03-fallen-earring.webp",
+          "thumb": "assets/albums/capas-y-accesorios/03-fallen-earring-thumb.webp",
+          "title": "Fallen Earring"
+        },
+        {
+          "src": "assets/albums/capas-y-accesorios/04-goddess-first-hair.webp",
+          "thumb": "assets/albums/capas-y-accesorios/04-goddess-first-hair-thumb.webp",
+          "title": "Goddess First Hair"
+        }
+      ]
+    },
+    {
+      "title": "Builds en acción",
+      "category": "personajes",
+      "date": "2026-10-28",
+      "cover": "assets/albums/builds/01-elfo-oscuro-mago-con-tridente-15-y-staff-21-thumb.webp",
+      "photos": [
+        {
+          "src": "assets/albums/builds/01-elfo-oscuro-mago-con-tridente-15-y-staff-21.webp",
+          "thumb": "assets/albums/builds/01-elfo-oscuro-mago-con-tridente-15-y-staff-21-thumb.webp",
+          "title": "Elfo Oscuro mago con tridente +15 y staff +21"
+        },
+        {
+          "src": "assets/albums/builds/02-dagger-con-tyrant-en-los-karik-con-ropa-dark-knight.webp",
+          "thumb": "assets/albums/builds/02-dagger-con-tyrant-en-los-karik-con-ropa-dark-knight-thumb.webp",
+          "title": "Dagger con Tyrant en los Karik, con ropa Dark Knight"
+        },
+        {
+          "src": "assets/albums/builds/03-necro-en-barakiel.webp",
+          "thumb": "assets/albums/builds/03-necro-en-barakiel-thumb.webp",
+          "title": "Necro en Barakiel"
+        }
       ]
     }
   ]

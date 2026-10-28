@@ -1,129 +1,158 @@
-const toggle = document.querySelector('.nav-toggle');
-const nav = document.querySelector('.main-nav');
-if (toggle && nav) {
-  toggle.addEventListener('click', () => {
-    const open = toggle.getAttribute('aria-expanded') === 'true';
-    toggle.setAttribute('aria-expanded', String(!open));
-    nav.classList.toggle('open', !open);
-  });
-}
+(() => {
+  const $ = (s, c = document) => c.querySelector(s);
+  const $$ = (s, c = document) => [...c.querySelectorAll(s)];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+  const esc = v => String(v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-const langSwitch = document.querySelector('.lang-switch');
-if (langSwitch) {
-  const langButton = langSwitch.querySelector('.lang-current');
-  langButton.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const open = langSwitch.classList.toggle('open');
-    langButton.setAttribute('aria-expanded', String(open));
-  });
-  // Options are real links to set_lang.php — clicking one just navigates and
-  // reloads the page in the new language, no extra JS needed here.
-  document.addEventListener('click', () => {
-    langSwitch.classList.remove('open');
-    langButton.setAttribute('aria-expanded', 'false');
-  });
-}
+  /* Cabecera: fondo sólido al hacer scroll */
+  const header = $('.site-header');
+  const onScroll = () => header && header.classList.toggle('is-scrolled', scrollY > 12);
+  onScroll(); addEventListener('scroll', onScroll, { passive: true });
 
-const userSwitch = document.querySelector('.user-switch');
-if (userSwitch) {
-  const userButton = userSwitch.querySelector('.user-current');
-  userButton.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const open = userSwitch.classList.toggle('open');
-    userButton.setAttribute('aria-expanded', String(open));
-  });
-  document.addEventListener('click', () => {
-    userSwitch.classList.remove('open');
-    userButton.setAttribute('aria-expanded', 'false');
-  });
-}
-
-const cookieBanner = document.getElementById('cookie-banner');
-const cookieAccept = document.getElementById('cookie-accept');
-if (cookieBanner && cookieAccept) {
-  if (!localStorage.getItem('cookieConsent')) {
-    cookieBanner.hidden = false;
+  /* Menú móvil */
+  const toggle = $('.nav-toggle'), nav = $('.main-nav');
+  if (toggle && nav) {
+    const setMenu = open => {
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+      nav.classList.toggle('open', open);
+      header.classList.toggle('menu-open', open);
+    };
+    toggle.addEventListener('click', () => setMenu(toggle.getAttribute('aria-expanded') !== 'true'));
+    addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
+    nav.addEventListener('click', e => { if (e.target.closest('a')) setMenu(false); });
   }
-  cookieAccept.addEventListener('click', () => {
-    localStorage.setItem('cookieConsent', 'accepted');
-    cookieBanner.hidden = true;
-  });
-}
 
-const discordPopup = document.getElementById('discord-popup');
-if (discordPopup) {
-  const discordClose = document.getElementById('discord-popup-close');
-  const discordDismiss = document.getElementById('discord-popup-dismiss');
-  const discordJoin = document.getElementById('discord-popup-join');
-  const hideDiscordPopup = () => {
-    sessionStorage.setItem('discordPopupSeen', 'true');
-    discordPopup.hidden = true;
-  };
-  if (!sessionStorage.getItem('discordPopupSeen')) {
-    setTimeout(() => { discordPopup.hidden = false; }, 4000);
+  /* Video de fondo: respetar "reducir movimiento" */
+  const video = $('.scene-video');
+  if (video && reduce.matches) video.pause();
+
+  /* Brasas flotantes */
+  const canvas = $('.scene-embers');
+  if (canvas && !reduce.matches) {
+    const ctx = canvas.getContext('2d');
+    let w = 0, h = 0, parts = [];
+    const dpr = Math.min(devicePixelRatio || 1, 1.5);
+    const make = initial => ({
+      x: Math.random() * w, y: initial ? Math.random() * h : h + 12,
+      r: Math.random() * 1.7 + .5, vy: -(Math.random() * .55 + .18),
+      vx: (Math.random() - .5) * .2, ph: Math.random() * 6.28,
+      a: Math.random() * .6 + .3, hot: Math.random() < .22
+    });
+    const resize = () => {
+      w = innerWidth; h = innerHeight;
+      canvas.width = w * dpr; canvas.height = h * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const n = w < 700 ? 28 : 64;
+      parts = Array.from({ length: n }, () => make(true));
+    };
+    resize(); addEventListener('resize', resize);
+    const frame = () => {
+      ctx.clearRect(0, 0, w, h);
+      ctx.globalCompositeOperation = 'lighter';
+      for (const p of parts) {
+        p.ph += .02; p.x += p.vx + Math.sin(p.ph) * .3; p.y += p.vy;
+        if (p.y < -10) Object.assign(p, make(false));
+        const fade = Math.min(1, p.y / (h * .35)) * p.a;
+        const col = p.hot ? '255,150,70' : '255,45,74';
+        ctx.fillStyle = `rgba(${col},${fade * .16})`;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.r * 4, 0, 6.283); ctx.fill();
+        ctx.fillStyle = `rgba(${col},${fade})`;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 6.283); ctx.fill();
+      }
+      requestAnimationFrame(frame);
+    };
+    frame();
   }
-  discordClose?.addEventListener('click', hideDiscordPopup);
-  discordDismiss?.addEventListener('click', hideDiscordPopup);
-  discordJoin?.addEventListener('click', hideDiscordPopup);
-  discordPopup.addEventListener('click', (e) => {
-    if (e.target === discordPopup) hideDiscordPopup();
-  });
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && !discordPopup.hidden) hideDiscordPopup();
-  });
-}
 
+  /* Índice lateral de "El servidor": marca la sección visible */
+  const tocLinks = $$('.toc a');
+  if (tocLinks.length && 'IntersectionObserver' in window) {
+    const map = new Map(tocLinks.map(a => [a.getAttribute('href').slice(1), a]));
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(en => {
+        if (en.isIntersecting) {
+          tocLinks.forEach(a => a.classList.remove('is-active'));
+          map.get(en.target.id)?.classList.add('is-active');
+        }
+      });
+    }, { rootMargin: '-20% 0px -65% 0px' });
+    map.forEach((_, id) => { const s = document.getElementById(id); if (s) io.observe(s); });
+  }
 
-// Public albums are committed to assets/albums/albums.json with image files in the repository.
-(async function initPublicGallery(){
-  const gallery=document.getElementById('public-gallery');
-  if(!gallery)return;
-  let albums=[];
-  try{
-    const response=await fetch('assets/albums/albums.json',{cache:'no-store'});
-    if(!response.ok)throw new Error('No se pudo leer el índice de álbumes');
-    const data=await response.json();
-    albums=Array.isArray(data.albums)?data.albums:[];
-  }catch(error){console.warn('Galería pública no disponible:',error);}
-  const filters=[...document.querySelectorAll('[data-filter]')];
-  function render(filter='all'){
-    const visible=albums.filter(a=>filter==='all'||a.category===filter);
-    if(!visible.length){
-      gallery.innerHTML='<div class="gallery-empty panel"><div class="empty-symbol">✦</div><h2>La próxima historia la escribimos juntos</h2><p>Cuando se publiquen álbumes en el repositorio, vas a poder verlos acá.</p><p class="muted-note">Todavía no hay fotos públicas cargadas en esta categoría.</p></div>';
-      return;
+  /* Galería pública (assets/albums/albums.json) */
+  (async function gallery() {
+    const root = $('#public-gallery');
+    if (!root) return;
+    let albums = [];
+    try {
+      const r = await fetch('assets/albums/albums.json', { cache: 'no-store' });
+      if (!r.ok) throw new Error('No se pudo leer el índice de álbumes');
+      const data = await r.json();
+      albums = (Array.isArray(data.albums) ? data.albums : []).map(a => ({
+        ...a,
+        photos: (a.photos || []).map(p => typeof p === 'string' ? { src: p, thumb: p, title: '' } : { thumb: p.src, title: '', ...p })
+      }));
+    } catch (err) { console.warn('Galería pública no disponible:', err); }
+
+    const filters = $$('[data-filter]');
+    const box = $('#gallery-lightbox'), img = $('#lightbox-image'), cap = $('#lightbox-caption');
+    let current = null, index = 0, lastFocus = null;
+
+    const fmtDate = d => {
+      const t = d ? new Date(d + 'T00:00:00') : null;
+      return t && !isNaN(t) ? t.toLocaleDateString('es-AR', { day: 'numeric', month: 'long', year: 'numeric' }) + ' · ' : '';
+    };
+
+    const render = (filter = 'all') => {
+      const visible = albums.filter(a => filter === 'all' || a.category === filter);
+      if (!visible.length) {
+        root.innerHTML = '<div class="gallery-empty panel"><div class="glyph" aria-hidden="true"><span>✦</span></div><h2>La próxima historia la escribimos juntos</h2><p>Todavía no hay fotos publicadas en esta categoría.</p></div>';
+        return;
+      }
+      root.innerHTML = '<div class="gallery-grid">' + visible.map((a, ai) => {
+        const photos = a.photos || [];
+        const cover = a.cover || photos[0]?.thumb || '';
+        return `<article class="album-card"><button type="button" class="album-cover-btn" data-album="${ai}" data-photo="0" aria-label="Abrir álbum ${esc(a.title || '')}"><img class="album-cover" src="${esc(cover)}" alt="" loading="lazy"></button><div class="album-meta"><h3>${esc(a.title || 'Álbum sin título')}</h3><p>${esc(fmtDate(a.date))}${photos.length} ${photos.length === 1 ? 'foto' : 'fotos'}</p><div class="album-photos">${photos.map((ph, pi) => `<button type="button" data-album="${ai}" data-photo="${pi}" aria-label="Abrir foto ${pi + 1}${ph.title ? ': ' + esc(ph.title) : ''}"><img src="${esc(ph.thumb)}" alt="" loading="lazy"></button>`).join('')}</div></div></article>`;
+      }).join('') + '</div>';
+      $$('[data-album]', root).forEach(b => b.addEventListener('click', () => open(visible[+b.dataset.album], +b.dataset.photo, b)));
+    };
+
+    const show = () => {
+      const photos = current?.photos || [];
+      if (!photos.length) return;
+      index = (index + photos.length) % photos.length;
+      const ph = photos[index];
+      img.src = ph.src;
+      img.alt = ph.title || current.title || 'Captura de L2 Intratables';
+      cap.textContent = `${ph.title ? ph.title + ' — ' : ''}${current.title || 'Álbum'} (${index + 1} / ${photos.length})`;
+    };
+    const open = (album, i, trigger) => {
+      current = album; index = i; lastFocus = trigger; show();
+      box.hidden = false; document.body.style.overflow = 'hidden';
+      $('.lightbox-close', box).focus();
+    };
+    const close = () => {
+      box.hidden = true; document.body.style.overflow = '';
+      lastFocus?.focus();
+    };
+    if (box) {
+      $('.lightbox-close', box).addEventListener('click', close);
+      $('.lightbox-prev', box).addEventListener('click', () => { index--; show(); });
+      $('.lightbox-next', box).addEventListener('click', () => { index++; show(); });
+      box.addEventListener('click', e => { if (e.target === box) close(); });
+      addEventListener('keydown', e => {
+        if (box.hidden) return;
+        if (e.key === 'Escape') close();
+        if (e.key === 'ArrowLeft') { index--; show(); }
+        if (e.key === 'ArrowRight') { index++; show(); }
+      });
     }
-    gallery.innerHTML='<div class="gallery-grid">'+visible.map((a,ai)=>`<article class="album-card"><img class="album-cover" src="${safe(a.cover||((a.photos||[])[0]||''))}" alt="${safe(a.title||'Álbum')}" loading="lazy"><div class="album-meta"><h3>${safe(a.title||'Álbum sin título')}</h3><p>${safe(a.date||'L2 Intratables')} · ${(a.photos||[]).length} fotos</p><div class="album-photos">${(a.photos||[]).map((src,pi)=>`<button type="button" data-album="${ai}" data-photo="${pi}" aria-label="Abrir foto ${pi+1}"><img src="${safe(src)}" alt="${safe(a.title||'Foto')}" loading="lazy"></button>`).join('')}</div></div></article>`).join('')+'</div>';
-    gallery.querySelectorAll('[data-album]').forEach(btn=>btn.addEventListener('click',()=>openLightbox(visible[Number(btn.dataset.album)],Number(btn.dataset.photo))));
-  }
-  function safe(value){return String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-  filters.forEach(btn=>btn.addEventListener('click',()=>{filters.forEach(b=>b.classList.toggle('is-active',b===btn));render(btn.dataset.filter);}));
-  const box=document.getElementById('gallery-lightbox'),img=document.getElementById('lightbox-image'),caption=document.getElementById('lightbox-caption');
-  let currentAlbum=null,currentIndex=0;
-  function openLightbox(album,index){currentAlbum=album;currentIndex=index;show();box.hidden=false;document.body.style.overflow='hidden';}
-  function show(){const photos=currentAlbum?.photos||[];if(!photos.length)return;currentIndex=(currentIndex+photos.length)%photos.length;img.src=photos[currentIndex];img.alt=currentAlbum.title||'Captura de L2 Intratables';caption.textContent=(currentAlbum.title||'Álbum')+' · '+(currentIndex+1)+' / '+photos.length;}
-  function close(){box.hidden=true;document.body.style.overflow='';}
-  box?.querySelector('.lightbox-close')?.addEventListener('click',close);
-  box?.querySelector('.lightbox-prev')?.addEventListener('click',()=>{currentIndex--;show();});
-  box?.querySelector('.lightbox-next')?.addEventListener('click',()=>{currentIndex++;show();});
-  box?.addEventListener('click',e=>{if(e.target===box)close();});
-  document.addEventListener('keydown',e=>{if(box.hidden)return;if(e.key==='Escape')close();if(e.key==='ArrowLeft'){currentIndex--;show();}if(e.key==='ArrowRight'){currentIndex++;show();}});
-  render();
-})();
+    filters.forEach(btn => btn.addEventListener('click', () => {
+      filters.forEach(b => { const on = b === btn; b.classList.toggle('is-active', on); b.setAttribute('aria-pressed', String(on)); });
+      render(btn.dataset.filter);
+    }));
+    render();
+  })();
 
-(function initAlbumPreview(){
-  const form=document.getElementById('album-form'),preview=document.getElementById('album-preview');
-  if(!form||!preview)return;
-  let objectUrls=[];
-  form.addEventListener('submit',event=>{
-    event.preventDefault();objectUrls.forEach(URL.revokeObjectURL);objectUrls=[];
-    const files=[...form.querySelector('#album-photos').files].filter(f=>f.type.startsWith('image/'));
-    if(!files.length){alert('Elegí al menos una imagen válida.');return;}
-    const title=form.querySelector('#album-title').value.trim();
-    const category=form.querySelector('#album-category').value;
-    preview.hidden=false;
-    preview.innerHTML=`<p class="panel-kicker">Vista previa local · ${files.length} fotos · ${category}</p><h3>${title.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}</h3><p class="muted-note">Estas fotos todavía no son públicas. Para publicarlas, agregá las imágenes al repositorio y actualizá <code>assets/albums/albums.json</code>.</p><div class="preview-images"></div>`;
-    const grid=preview.querySelector('.preview-images');
-    files.forEach(file=>{const url=URL.createObjectURL(file);objectUrls.push(url);const img=document.createElement('img');img.src=url;img.alt=file.name;grid.appendChild(img);});
-    preview.scrollIntoView({behavior:'smooth',block:'start'});
-  });
 })();
